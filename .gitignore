@@ -290,3 +290,4 @@ Testing/
 
 # Django
 *.sqlite3
+assignment1/perf.*
