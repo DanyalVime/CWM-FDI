@@ -25,47 +25,20 @@ def init_matrix(n: int, seed: float) -> Matrix:
 def zero_matrix(n: int) -> Matrix:
     return [[0.0 for _ in range(n)] for _ in range(n)]
 
-#Reorder loops to improve locality
-def matmul_fast1(a: Matrix, b: Matrix, c: Matrix, n: int) -> None:
+
+# Intentionally simple O(n^3) matrix multiplication.
+# This loop order is correct but cache-unfriendly for matrix B.
+def matmul_slow(a: Matrix, b: Matrix, c: Matrix, n: int) -> None:
     for i in range(n):
-        row_ai = a[i]
-        row_ci = c[i]
         for j in range(n):
+            start_cell = time.perf_counter_ns()
             total = 0.0
             for k in range(n):
-                total += row_ai[k] * b[k][j]
-            row_ci[j] = total
-
-#Reorder loops to reduce inner loops
-def matmul_fast2(a: Matrix, b: Matrix, c: Matrix, n: int) -> None:
-    for i in range(n):
-        row_ai = a[i]
-        row_ci = c[i]
-        for j in range(n):
-            row_ci[j] = 0.0
-        for k in range(n):
-            aik = row_ai[k]
-            row_bk = b[k]
-            for j in range(n):
-              row_ci[j] += aik * row_bk[j]
-
-def transpose(m: Matrix) -> Matrix:
-    n = len(m)
-    return [[m[i][j] for i in range(n)] for j in range(n)]
-
-#Matrix transpose method
-def matmul_fast3(a: Matrix, b: Matrix, c: Matrix, n: int) -> None:
-    bt = transpose(b)
-
-    for i in range(n):
-        row_ai = a[i]
-        row_ci = c[i]
-        for j in range(n):
-            total = 0.0
-            row_btj = bt[j]
-            for k in range(n):
-                total += row_ai[k] * row_btj[k]
-            row_ci[j] = total
+                total += a[i][k] * b[k][j]
+            c[i][j] = total
+            end_cell = time.perf_counter_ns()
+            cell_times.append(end_cell - start_cell)
+    print(f"Average cell time: {sum(cell_times)/len(cell_times):.2f} ns")
 
 
 def checksum(m: Matrix, n: int) -> float:
@@ -110,14 +83,15 @@ def main(argv: list[str]) -> int:
     b = init_matrix(n, 2.0)
 
     c = zero_matrix(n)
- 
+    start = time.perf_counter()
     for _ in range(reps):
-        matmul_fast1(a, b, c, n)
-    
-    print(f"n={n} reps={reps} checksum={checksum(c, n):.6f}")
+        matmul_slow(a, b, c, n)
+    end = time.perf_counter()
 
-    return 0
     
+    print(f"Total matmul_slow time: {(end-start)*1000:.3f} ms")
+    print(f"n={n} reps={reps} checksum={checksum(c, n):.6f}")
+    return 0
 
 
 if __name__ == "__main__":

@@ -110,11 +110,12 @@ def main(argv: list[str]) -> int:
     b = init_matrix(n, 2.0)
 
     c = zero_matrix(n)
- 
+    start = time.perf_counter()
     for _ in range(reps):
-        matmul_fast1(a, b, c, n)
+        matmul_fast3(a, b, c, n)
+    end = time.perf_counter()
     
-    print(f"n={n} reps={reps} checksum={checksum(c, n):.6f}")
+    print(f"matmul_fast: {(end-start)*1000:.3f} ms")
 
     return 0
     
