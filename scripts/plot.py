@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 
 
 # parameters to modify 
-filename="time_c.txt"
-label='label'
-xlabel = 'Measurement number'
+filename="ping_0001_times.txt"
+label='interval 0.0001s'
+xlabel = 'RTT (ms)'
 ylabel = 'Cumulative probability'
-title=''
+title='CDF interval 0.0001s'
 fig_name='my_graph.png'
 bins=100 #adjust the number of bins to your plot
 
@@ -29,7 +29,6 @@ n = np.arange(1,len(t)+1) / float(len(t))
 ts = np.sort(t)
 fig, ax = plt.subplots()
 ax.step(ts,n)
-ax.set_xscale('log') #remove
 
 plt.xlabel(xlabel)
 plt.ylabel(ylabel)

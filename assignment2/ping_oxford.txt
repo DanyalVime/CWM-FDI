@@ -1,0 +1,15 @@
+PING www.ox.ac.uk.cdn.cloudflare.net (172.66.169.161) 56(84) bytes of data.
+64 bytes from 172.66.169.161: icmp_seq=1 ttl=52 time=8.91 ms
+64 bytes from 172.66.169.161: icmp_seq=2 ttl=52 time=8.89 ms
+64 bytes from 172.66.169.161: icmp_seq=3 ttl=52 time=8.87 ms
+64 bytes from 172.66.169.161: icmp_seq=4 ttl=52 time=8.81 ms
+64 bytes from 172.66.169.161: icmp_seq=5 ttl=52 time=8.90 ms
+64 bytes from 172.66.169.161: icmp_seq=6 ttl=52 time=8.82 ms
+64 bytes from 172.66.169.161: icmp_seq=7 ttl=52 time=8.87 ms
+64 bytes from 172.66.169.161: icmp_seq=8 ttl=52 time=8.73 ms
+64 bytes from 172.66.169.161: icmp_seq=9 ttl=52 time=8.67 ms
+64 bytes from 172.66.169.161: icmp_seq=10 ttl=52 time=8.70 ms
+
+--- www.ox.ac.uk.cdn.cloudflare.net ping statistics ---
+10 packets transmitted, 10 received, 0% packet loss, time 1811ms
+rtt min/avg/max/mdev = 8.667/8.816/8.906/0.084 ms
