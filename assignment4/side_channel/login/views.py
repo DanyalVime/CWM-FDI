@@ -61,7 +61,7 @@ def login_view(request):
         password = request.POST.get("password", "")
 
         t0 = time.perf_counter()
-        success = _vulnerable_check(username, password) # replace with safe_check as neede!
+        success = safe_check(username, password) # replace with safe_check as neede!
         elapsed_ms = (time.perf_counter() - t0) * 1000
 
         if success:
