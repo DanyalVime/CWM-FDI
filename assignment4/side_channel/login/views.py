@@ -30,7 +30,7 @@ def _vulnerable_check(username: str, password: str) -> bool:
 def safe_check(username: str, password: str) -> bool:
     """
     stub for safe password check
-    To be completed by you!
+    keeps track of whether the password is correct using a result variable rather than immediately returning False. 
     """
     if username != SECRET_USERNAME:
         return False
@@ -44,10 +44,10 @@ def safe_check(username: str, password: str) -> bool:
         # code below is vulnerable. Fix it!
         # then replace _vulnerable_check with safe_check in login_view() below
         if i >= len(SECRET_PASSWORD) or ch != SECRET_PASSWORD[i]:
-            return False
+            return = False
         time.sleep(DELAY_PER_CHAR)
 
-    return len(password) == len(SECRET_PASSWORD)
+    return result and len(password) == len(SECRET_PASSWORD)
 
 
 
