@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 
 
 # parameters to modify 
-filename="time_c.txt"
+filename="time_c without pinning.txt"
 label=''
 xlabel = 'Time difference (ns)'
 ylabel = 'Cumulative probability'
 title=''
-fig_name='q6.png'
+fig_name='q5.png'
 bins=100 #adjust the number of bins to your plot
 
 ## load data from input file
 t = np.loadtxt(filename, delimiter=" ", dtype="float")
-
+t = t / 2.8125
 ## if your data is "X Y" (2 cols), use the following line
 #plt.plot(t[:,0], t[:,1], label=label)  # Plot some data on the (implicit) axes.
 
