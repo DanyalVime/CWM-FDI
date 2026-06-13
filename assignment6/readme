@@ -1,0 +1,1 @@
+To use the tool open the terminal at the root of the project repository on a Linux machine, and enter: “sudo python3 bottleneck_detector.py <program being tested>”. It will then print the raw measurements followed by a list of problems and suggestions. 
