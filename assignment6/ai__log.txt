@@ -1,0 +1,170 @@
+prompt:
+I am trying to parse the output of /usr/bin/time -v in Python. I already know I want user time, system time, elapsed wall time, and major page faults. Can you explain how I can capture the output with subprocess.run and search through the lines?
+
+reply:
+
+/usr/bin/time -v writes its report to stderr, not stdout, so capture stderr from subprocess.run.
+
+Example:
+
+import subprocess
+import re
+
+cmd = ["/usr/bin/time", "-v", "python3", "my_script.py"]
+
+result = subprocess.run(
+    cmd,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
+)
+
+# The timed program's stdout is here:
+program_output = result.stdout
+
+# /usr/bin/time -v output is usually here:
+time_output = result.stderr
+
+wanted = {
+    "User time (seconds)": "user_time",
+    "System time (seconds)": "system_time",
+    "Elapsed (wall clock) time": "elapsed_wall_time",
+    "Major (requiring I/O) page faults": "major_page_faults",
+}
+
+parsed = {}
+
+for line in time_output.splitlines():
+    line = line.strip()
+
+    for label, key in wanted.items():
+        if line.startswith(label):
+            # Split only on the first colon
+            value = line.split(":", 1)[1].strip()
+            parsed[key] = value
+
+print(parsed)
+
+That will produce something like:
+
+{
+    "user_time": "0.12",
+    "system_time": "0.03",
+    "elapsed_wall_time": "0:00.18",
+    "major_page_faults": "2"
+}
+
+A slightly cleaner version is to parse every key: value line first:
+
+import subprocess
+
+result = subprocess.run(
+    ["/usr/bin/time", "-v", "python3", "my_script.py"],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
+)
+
+stats = {}
+
+for line in result.stderr.splitlines():
+    if ":" not in line:
+        continue
+
+    key, value = line.split(":", 1)
+    stats[key.strip()] = value.strip()
+
+user_time = stats["User time (seconds)"]
+system_time = stats["System time (seconds)"]
+elapsed = stats["Elapsed (wall clock) time"]
+major_faults = stats["Major (requiring I/O) page faults"]
+
+print(user_time, system_time, elapsed, major_faults)
+
+One important caveat: if the program you are timing also writes to stderr, then its stderr will be mixed together with /usr/bin/time -v output. A robust way around that is to tell time to write its report to a separate file:
+
+import subprocess
+import tempfile
+
+with tempfile.NamedTemporaryFile(mode="r+") as f:
+    result = subprocess.run(
+        [
+            "/usr/bin/time",
+            "-v",
+            "-o",
+            f.name,
+            "python3",
+            "my_script.py",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    f.seek(0)
+    time_output = f.read()
+
+stats = {}
+
+for line in time_output.splitlines():
+    if ":" in line:
+        key, value = line.split(":", 1)
+        stats[key.strip()] = value.strip()
+
+print({
+    "user_time": stats["User time (seconds)"],
+    "system_time": stats["System time (seconds)"],
+    "elapsed_wall_time": stats["Elapsed (wall clock) time"],
+    "major_page_faults": stats["Major (requiring I/O) page faults"],
+})
+
+That keeps:
+
+result.stdout   # program stdout
+result.stderr   # program stderr
+time_output     # /usr/bin/time -v report
+
+separate.
+
+what do you jmean by search through the lines
+
+By “search through the lines,” I mean: take the text output from /usr/bin/time -v, split it into individual lines, then check each line to see whether it is one of the fields you care about.
+
+For example, time_output might look like this:
+
+User time (seconds): 0.12
+System time (seconds): 0.03
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.18
+Major (requiring I/O) page faults: 2
+
+This code looks at it one line at a time:
+
+for line in time_output.splitlines():
+    print(line)
+
+Then you can check each line:
+
+for line in time_output.splitlines():
+    if line.startswith("User time (seconds):"):
+        user_time = line.split(":", 1)[1].strip()
+
+    elif line.startswith("System time (seconds):"):
+        system_time = line.split(":", 1)[1].strip()
+
+    elif line.startswith("Elapsed (wall clock) time"):
+        elapsed = line.split(":", 1)[1].strip()
+
+    elif line.startswith("Major (requiring I/O) page faults:"):
+        major_faults = line.split(":", 1)[1].strip()
+
+The key idea is that /usr/bin/time -v gives you one measurement per line. So you loop over the lines and look for the ones whose labels match the data you want.
+
+One small detail: for elapsed time, the line contains more than one colon because the value might be 0:00.18. That is why I used:
+
+line.split(":", 1)
+
+instead of:
+
+line.split(":")
+
+The 1 means “split only at the first colon.”
