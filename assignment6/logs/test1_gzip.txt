@@ -1,0 +1,14 @@
+Measurements
+------------
+Wall time: 2.18 seconds
+User time: 2.07 seconds
+System time: 0.04 seconds
+CPU/wall ratio: 0.9678899082568806
+Major page faults: 0.0
+IPC: 1.156421248307494
+Cache miss rate: 0.0187429136119852
+
+Possible problems
+-----------------
+- CPU time was close to wall time. The CPU appears to be working for most of the elapsed time.
+  Check for expensive loops.

@@ -1,0 +1,20 @@
+Measurements
+------------
+Wall time: 1.34 seconds
+User time: 1.71 seconds
+System time: 0.12 seconds
+CPU/wall ratio: 1.3656716417910448
+Major page faults: 0.0
+IPC: 0.7349114812293814
+Cache miss rate: 0.0874631207743444
+
+Possible problems
+-----------------
+- CPU time was close to wall time. The CPU appears to be working for most of the elapsed time.
+  Check for expensive loops.
+
+- The CPU is doing less than one instruction per cycle on average. IPC is low.
+  This could suggest stalls, cache misses, or interpreter overhead.
+
+- More than 5 percent of cache references missed. Cache miss rate is high.
+  This may suggest poor locality or poor data reuse. Try using more contiguous data or changing loop order.
